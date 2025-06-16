@@ -1,0 +1,36 @@
+spring:
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+    hikari:
+      minimum-idle: ${MINIMUM_IDLE}
+      maximum-pool-size: ${MAXIMUM_POOL_SIZE}
+
+  jpa:
+    open-in-view: false
+
+  flyway:
+    locations:
+      - classpath:db/migration
+      - classpath:test-data
+
+  web:
+    resources:
+      add-mappings: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${JWKS_URI}
+
+logging:
+  level:
+    org:
+      hibernate:
+        orm:
+          connections:
+            pooling: warn

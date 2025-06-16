@@ -1,0 +1,69 @@
+version: '3.9'
+services:
+
+  nginx:
+    build: ./nginx
+    networks:
+      - proxxy-network
+    ports:
+      - "80:80"
+    depends_on:
+      - store-api
+      - authorization-server
+
+  store-api:
+    build: .
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MINIMUM_IDLE: ${MINIMUM_IDLE}
+      MAXIMUM_POOL_SIZE: ${MAXIMUM_POOL_SIZE}
+      JWKS_URI: ${JWKS_URI}
+
+
+    command: [ "./wait-for-it.sh", "db-proxxy-store:3306", "-t", "40", "--", "java","--enable-preview", "-jar", "app.jar" ]
+    depends_on:
+      - db-proxxy-store
+    networks:
+      - proxxy-network
+    deploy:
+      replicas: 1
+
+  authorization-server:
+    build: ../auth
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MINIMUM_IDLE: ${MINIMUM_IDLE}
+      MAXIMUM_POOL_SIZE: ${MAXIMUM_POOL_SIZE}
+
+    command: [ "./wait-for-it.sh", "db-proxxy-store:3306", "-t", "40", "--", "java","--enable-preview", "-jar", "app.jar" ]
+    depends_on:
+      - db-proxxy-store
+    networks:
+      - proxxy-network
+    deploy:
+      replicas: 1
+
+  db-proxxy-store:
+    image: mysql:9.3
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/db_store
+    networks:
+      - proxxy-network
+
+networks:
+  proxxy-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
