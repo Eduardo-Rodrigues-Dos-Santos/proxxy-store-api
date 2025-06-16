@@ -1,4 +1,4 @@
-# 🛒 Proxxy Store - Ambiente de Desenvolvimento com OAuth2
+# 🛒 Proxxy Store
 
 Este projeto é composto por:
 
