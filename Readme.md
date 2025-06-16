@@ -96,7 +96,7 @@ O Nginx atua como balanceador e roteador, encaminhando as requisições para o s
 
 A documentação da API (Swagger UI) pode ser acessada através do seguinte endereço:
 
-🔗 [http://api.localhost/swagger-ui](http://api.localhost/swagger-ui)
+🔗 [http://api.localhost/swagger-ui/index.html](http://api.localhost/swagger-ui/index.html)
 
 ---
 
